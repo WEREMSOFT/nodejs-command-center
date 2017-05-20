@@ -1,11 +1,22 @@
 var colors = require('colors');
 var exec = require('child_process').exec;
 var prompt = require('prompt');
+var Node = require('./model/Node');
+var UserInputHandler = require('./controllers/UserInputHandler');
+
 const fs = require('fs');
 var ncp = require('ncp').ncp;
 let GAME_NAME_HIVE = "Texan Tycoon";
 let GAME_NAME_CAMEL_CASE = "texanTycoon";
+let uih = new UserInputHandler();
 var languajes = [];
+
+var mainMenu = new Node('Main Menu');
+
+var languajeMenu = new Node('Change Server Languaje');
+
+mainMenu.addChild(languajeMenu);
+
 
 languajes['EN'] = '33';  
 languajes['DE'] = '56';  
@@ -23,9 +34,11 @@ languajes['TH'] = '116';
 languajes['TR'] = '119';  
 languajes['VI'] = '123';  
 
-const readline = require('readline');
-readline.emitKeypressEvents(process.stdin);
-process.stdin.setRawMode(true);
+// const readline = require('readline');
+// readline.emitKeypressEvents(process.stdin);
+// process.stdin.setRawMode(true);
+uih.enableRawMode();
+uih.addListener('KeyboardInput', userInputHandler);
 
 // process.stdin.addListener("data", function(d) {
 //     // note:  d is an object, and when converted to a string it will
@@ -46,6 +59,12 @@ process.stdin.on('keypress', (str, key) => {
   printMenu();
 });
 console.log('Press any key...');
+
+function userInputHandler(word){
+  commandHandler(word);
+  printMenu();
+}
+
 
 function printMenu(){
 	console.log('Select an option'.yellow);
@@ -70,7 +89,8 @@ function printMenu(){
 	console.log('v. Build Spritesheet Local'.green);
 	console.log('w. Open hive sprite folder'.green);
 	console.log('x. Open local sprite folder'.green);
-	console.log('y. Copy Texan Tycoon from 0.0.10 to 17.05'.green);
+	console.log('y. Copy DDCCORE Texan Tycoon from 0.0.10 to 17.05'.green);
+	console.log('z. Copy DDCART Texan Tycoon from 0.0.10 to 17.05'.green);
 
 	console.log('0. Exit'.green);
 
@@ -98,9 +118,9 @@ function changeLang(pLangCode){
 				});
 }
 
-function commandHandler(str, key){
+function commandHandler(key){
 	//process.stdout.write('\033c');
-	switch(key.name){
+	switch(key){
 		case '1':
 			console.log('Starting Servers'.yellow);
 			break;
@@ -110,8 +130,8 @@ function commandHandler(str, key){
 		case '3':
 			resetCDN();
 			break;
-		case '4':
-			console.log('Changing Game Name'.yellow);
+		case '5':
+			changeGameName();
 			break;
 		case '6':
 			changeLang('FR');
@@ -158,6 +178,7 @@ function commandHandler(str, key){
 			break;
 		case 'u':
 			copyAssets('\\\\hive.ddcinternal.com\\Documents\\Product\\Games\\Slots\\GL Games - Mobile RTG (GUI Redesign)\\Texan Tycoon', 'C:\\Projects\\GamesAssets\\TexanTycoon');
+			copyAssets('\\\\hive.ddcinternal.com\\Documents\\Product\\Games\\Slots\\GL Games - Mobile RTG (GUI Redesign)\\Nova 7s', 'C:\\Projects\\GamesAssets\\Nova7s');
 			break;
 		case 'v':
 			runTexturePackerLocal('0.0.10');
@@ -174,6 +195,9 @@ function commandHandler(str, key){
 		case '0':
 			console.log('BYE'.rainbow);
 			process.exit();
+		default:
+			console.log('you press ' + key);
+
 	}
 }
 
@@ -237,4 +261,8 @@ function openLocalSpriteSourceFolder(){
 		}
 	);
 
+}
+
+function changeGameName(){
+	uih.diableRawMode();
 }

@@ -1,5 +1,6 @@
 
 var events = require('events');
+
 class UserInputHandler extends events.EventEmitter{
 	constructor(){
 		super();
@@ -8,12 +9,8 @@ class UserInputHandler extends events.EventEmitter{
 		var that = this;
 		process.stdin.addListener("data", function(d) {
 		    var word = d.toString().trim();
-		    that.emit('word', word);
+		    that.emit('KeyboardInput', word);
 		  });	
-	}
-
-	emitCustomEvent(){
-		this.emit('cadorna', 'hola tarola!');
 	}
 
 	enableRawMode(){
@@ -26,13 +23,14 @@ class UserInputHandler extends events.EventEmitter{
 }
 
 
-var uih = new UserInputHandler();
+// var uih = new UserInputHandler();
 
-uih.addListener('cadorna', (message)=>{console.log(message)});
-uih.addListener('word', (message)=>{
-	console.log('you enter ' + message)
-	if(message == 'q') process.exit(1);
-});
-uih.emitCustomEvent();
+// uih.addListener('cadorna', (message)=>{console.log(message)});
+// uih.addListener('word', (message)=>{
+// 	console.log('you enter ' + message)
+// 	if(message == 'q') process.exit(1);
+// });
+// uih.emitCustomEvent();
 
+module['exports'] = UserInputHandler;
 
